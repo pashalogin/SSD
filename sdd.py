@@ -61,9 +61,10 @@ def main():
     db.close()
 
 def loadDFs():
-    global data = pd.read_csv('data/HackathonInputData.txt', delimiter="|")
-    global zipInfo = pd.read_csv('data/zip_info_STATIC_v2.csv', delimiter=",")
-    global slotInfo = pd.read_csv('data/zip_slot_STATIC_v1.csv', delimiter=",")
+    global data
+    data = pd.read_csv('data/HackathonInputData.txt', delimiter="|")
+    zipInfo = pd.read_csv('data/zip_info_STATIC_v2.csv', delimiter=",")
+    slotInfo = pd.read_csv('data/zip_slot_info_STATIC_v1.csv', delimiter=",")
    # print(data.SERVICE_JOB_ID)
 
 def costFunction():
