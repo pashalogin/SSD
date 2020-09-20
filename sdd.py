@@ -43,6 +43,8 @@ def main():
        loadDynamicData(db)
     db.close()
 
+    costFunction()
+
     slotSelector = SlotSelector()
     slots = {
         '13:00': 1.00,
