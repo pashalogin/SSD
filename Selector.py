@@ -40,9 +40,9 @@ class SlotSelector():
 
     def normalize_costs(self, slots: List[Slot]) -> List[Slot]:
         costs = list(map(lambda slot: slot.cost,slots))
-        raw_costs = list(filter(lambda cost: math.isnan(cost), costs))
+        raw_costs = list(filter(lambda cost: not math.isnan(cost), costs))
         sum = reduce((lambda x, y: x + y),raw_costs)
-        slot_array = list(filter(lambda slot: math.isnan(slot.cost), slots))
+        slot_array = list(filter(lambda slot: not math.isnan(slot.cost), slots))
         slot_array = list(map(lambda slot: Slot(slot.start_time,slot.cost/sum), slot_array))
         slot_array.sort(key=lambda slot: slot.cost)
         return slot_array
@@ -67,13 +67,9 @@ class SlotSelector():
 
 if __name__ == "__main__":
     # execute only if run as a script
-    slotSelector = SlotSelector()
-    slots = {
-        '13:00': 1.00,
-        '15:00': 4.50,
-        '17:00': 11.25,
-        '19:00': 20.75,
-    }
+    slotPref =  {"13:00": 0.31, "15:00": 0.22, "17:00": 0.38, "19:00": 0.10}
+    slotSelector = SlotSelector(slot_preferences=slotPref)
+    slots = {'13:00': 95.67, '15:00': 95.67, '17:00': 95.67, '19:00': 95.67}
     availability =  {"13:00": 0.0, "15:00": 0.9, "17:00": 0.0, "19:00": 0.0}
     slot_list = [Slot(k,v) for k, v in slots.items()]
     print("slot_list=",slot_list)
