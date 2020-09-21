@@ -16,13 +16,13 @@ class Slot:
         return f"{{start_time: {self.start_time}, cost: {self.cost}}}"
 
 class SlotSelector():
-    def __init__(self, slot_threshold: Optional[float] = 0.25, min: Optional[int] = 1, max:Optional[int] = 4, slot_preferences = {"13:00": .25, "15:00": .25, "17:00": .25, "19:00": .25}) -> None:
+    def __init__(self, slot_threshold: Optional[float] = 0.25, min: Optional[int] = 1, max:Optional[int] = 4, slot_preferences = {"1300": .25, "1500": .25, "1700": .25, "1900": .25}) -> None:
        self.slot_threshold = slot_threshold
        self.min = min
        self.max = max
        self.slot_preferences = slot_preferences
 
-    def choose_slot(self, slots: Mapping[str, float], availability: Mapping[str, float] = {"13:00": 0.0, "15:00": 0.0, "17:00": 0.0, "19:00": 0.0}) -> Type[Slot]:
+    def choose_slot(self, slots: Mapping[str, float], availability: Mapping[str, float] = {"1300": 0.0, "1500": 0.0, "1700": 0.0, "1900": 0.0}) -> Type[Slot]:
         open_slots = self.generate_open_slots(slots, availability)
         return open_slots[self.get_random_int(open_slots)]
 
@@ -67,10 +67,10 @@ class SlotSelector():
 
 if __name__ == "__main__":
     # execute only if run as a script
-    slotPref =  {"13:00": 0.31, "15:00": 0.22, "17:00": 0.38, "19:00": 0.10}
+    slotPref =  {"1300": 0.31, "1500": 0.22, "1700": 0.38, "1900": 0.10}
     slotSelector = SlotSelector(slot_preferences=slotPref)
-    slots = {'13:00': 95.67, '15:00': 95.67, '17:00': 95.67, '19:00': 95.67}
-    availability =  {"13:00": 0.0, "15:00": 0.9, "17:00": 0.0, "19:00": 0.0}
+    slots = {'1300': 95.67, '1500': 95.67, '1700': 95.67, '1900': 95.67}
+    availability =  {"1300": 0.0, "1500": 0.9, "1700": 0.0, "1900": 0.0}
     slot_list = [Slot(k,v) for k, v in slots.items()]
     print("slot_list=",slot_list)
     print(slotSelector.normalize_costs(slot_list))
