@@ -40,7 +40,7 @@ class SlotSelector():
 
     def normalize_costs(self, slots: List[Slot]) -> List[Slot]:
         costs = list(map(lambda slot: slot.cost,slots))
-        raw_costs = list(filter(lambda cost: isinstance(cost,float), costs))
+        raw_costs = list(filter(lambda cost: math.isnan(cost), costs))
         sum = reduce((lambda x, y: x + y),raw_costs)
         slot_array = list(filter(lambda slot: math.isnan(slot.cost), slots))
         slot_array = list(map(lambda slot: Slot(slot.start_time,slot.cost/sum), slot_array))
