@@ -1,6 +1,8 @@
+# from slotselector import SlotSelector
 from typing import Type, Optional, Mapping, List, Any
 import random
 from functools import reduce
+import math
 
 class Slot:
     def __init__(self, start_time, cost):
@@ -40,7 +42,7 @@ class SlotSelector():
         costs = list(map(lambda slot: slot.cost,slots))
         raw_costs = list(filter(lambda cost: isinstance(cost,float), costs))
         sum = reduce((lambda x, y: x + y),raw_costs)
-        slot_array = list(filter(lambda slot: isinstance(slot.cost,float), slots))
+        slot_array = list(filter(lambda slot: math.isnan(slot.cost), slots))
         slot_array = list(map(lambda slot: Slot(slot.start_time,slot.cost/sum), slot_array))
         slot_array.sort(key=lambda slot: slot.cost)
         return slot_array
