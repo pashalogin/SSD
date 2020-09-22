@@ -16,34 +16,6 @@ def createTables(db):
     db.execute("CREATE TABLE ZIP_SLOT_SIM(ZIPCODE INT, MARKET TEXT,SLOT INT, CLAIM_CNT INT,SERVED_FLAG INT, DENSITY_PRED INT, DENSITY_SUCC INT)")
     db.execute("CREATE TABLE SLOT_CAPACITY(MARKET TEXT, DAY_OF_WK INT, SLOT INT, CAPACITY, CAPACITY_REMAINING)")
 
-def loadDFs():
-    global zip_info, zip_slot_info,slot_maxZipCount, inputData
-    zip_info = pd.read_csv("data/zip_info_STATIC_v3.csv", sep=",")
-    zip_slot_info = pd.read_csv("data/zip_slot_info_STATIC_v3.csv", sep=",")
-    slot_maxZipCount = pd.read_csv("data/slot_maxZipCount_STATIC_v3.csv", sep=",")
-
-   # df = pd.read_sql_query("select * from airlines limit 5;", conn)
-
-    #slot_capacity = pd.read_csv("data/slot_capacity_DYNAMIC_full_v3.csv", sep=",")
-    #zip_slot_sim = pd.read_csv("data/zip_slot_sim_DYNAMIC_v3.csv", sep=",")
-
-    inputData = pd.read_csv('data/HackathonInputData.txt', delimiter="|")
-    #zip_info = zip_info[zip_info.market == market]
-    #zip_slot_info = zip_slot_info[zip_slot_info.market == market]
-    #slot_maxZipCount = slot_maxZipCount[slot_maxZipCount.market == market]
-    #slot_sim = slot_capacity[(slot_capacity.market == market)&(slot_capacity.day_of_wk == day_of_wk)]
-    #zip_slot_sim = zip_slot_sim[zip_slot_sim.market == market]
-
-    zip_info.zipcode = zip_info.zipcode.astype(str)
-    zip_slot_info.zipcode = zip_slot_info.zipcode.astype(str)
-   # zip_slot_sim.zipcode = zip_slot_sim.zipcode.astype(str)
-
-    zip_slot_info.scheduled_service_time = zip_slot_info.scheduled_service_time.astype('int64')
-   # zip_slot_sim.slot = zip_slot_sim.slot.astype('int64')
-   # zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").split(" "))
-
-
-
 def loadDynamicData(db):
     pd.read_csv('data/zip_slot_sim_DYNAMIC_v3.csv', delimiter=",").to_sql("ZIP_SLOT_SIM",db, if_exists='append', index=False)
     #displayData(db, "ZIP_SLOT_SIM")
@@ -57,7 +29,6 @@ def displayData(db, tableName):
          print(row)
 
 def main():
-    #loadDFs()
     inputData = pd.read_csv('data/HackathonInputData.txt', delimiter="|")
     zip_info = pd.read_csv("data/zip_info_STATIC_v3.csv", sep=",")
     zip_slot_info = pd.read_csv("data/zip_slot_info_STATIC_v3.csv", sep=",")
@@ -88,18 +59,13 @@ def main():
       slot = 1300
       #day_of_wk = 0
       #expert_type = "FT"
-    #loadDFs(market)
 
       with sqlite3.connect(db_path) as db:
         #createTables(db)
         # insert(db,"pasha",2000)
         #loadDynamicData(db)
-        #slot_capacity = pd.read_csv("data/slot_capacity_DYNAMIC_full_v3.csv", sep=",")
-        #zip_slot_sim = pd.read_csv("data/zip_slot_sim_DYNAMIC_v3.csv", sep=",") 
-
         slot_capacity = pd.read_sql_query("select * from SLOT_CAPACITY", db)
         zip_slot_sim = pd.read_sql_query("select * from ZIP_SLOT_SIM", db)
-
       db.close()
    
       slot_capacity.columns = map(str.lower,slot_capacity.columns)
@@ -121,8 +87,6 @@ def main():
       print(cost_dictionary)
       print("Done")
 
-      #handshake .. .csv
-      #Selection_Probablility_AEHistoricalDataMay-June2020.csv
       slot_Pref = pd.read_csv("data/Selection_Probablility_AEHistoricalDataMay-June2020.csv", sep=",")
       slot_Pref = slot_Pref[slot_Pref.LOCATION_NAME == market]
       slot_Pref = slot_Pref[slot_Pref.AM_PM == time_of_day]
@@ -136,20 +100,6 @@ def main():
 
       print(slotPref)
       slotSelector = SlotSelector(slot_preferences = slotPref)
-      # slot_capacity_1 = pd.read_sql_query("select * from SLOT_CAPACITY WHERE ", db)
-      # slotSelector.choose_slot(cost_dictionary, 
-
-      # (capacity - capacity_remaining) /capacity
-      slots = {
-          '13:00': 1.00,
-          '15:00': 4.50,
-          '17:00': 11.25,
-          '19:00': 20.75,
-       }
-
-      #print(slotSelector.choose_slot(cost_dictionary, slots))
-
-      #print(slot_sim)
 
       slot_sim_1300 = slot_sim[slot_sim.slot == 1300]
       capacity_1300 = (slot_sim_1300['capacity'] - slot_sim_1300['capacity_remaining'])/slot_sim_1300['capacity']
@@ -173,25 +123,6 @@ def main():
       with sqlite3.connect(db_path) as db:
         updateCapacity(db,choosenSlot.start_time, market)
       db.close()
-    # {1300 : map} .. need to deduct the remaining capacity for the given slot and day of week
-    #slot_list = [Slot(k,v) for k, v in slots.items()]
-    #print("slot_list=",slot_list)
-   # print(slotSelector.normalize_costs(slot_list))
-   # print(slotSelector.scale_by_availability(slot_list,availability))
-   # print(slotSelector.generate_open_slots(slots,availability))
-   # print(slotSelector.choose_slot(slots,availability))
-   # print('Done')
-
-def costFunction():
-    print("*************")
-    print(data)
-    print("*************")
-
-def insert(db, val1, val2):
-    db.execute("insert into tbl1 values('{}','{}')".format(val1,val2))
-    cursor = db.execute("select * from tbl1");
-    for row in cursor:
-         print(row[0])
 
 def updateCapacity(db, slot, market):
     db.execute("update SLOT_CAPACITY set capacity_remaining = capacity_remaining-1 where slot = '{}' and market = '{}'".format(slot,market))
