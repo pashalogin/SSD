@@ -22,8 +22,8 @@ class SlotSelector():
        self.max = max
        self.slot_preferences = slot_preferences
 
-    def choose_slot(self, slots: Mapping[str, float], availability: Mapping[str, float] = {"1300": 0.0, "1500": 0.0, "1700": 0.0, "1900": 0.0}) -> Type[Slot]:
-        open_slots = self.generate_open_slots(slots, availability)
+    def choose_slot(self, slots: Mapping[str, float], consumed_capacity_percentage: Mapping[str, float] = {"1300": 0.0, "1500": 0.0, "1700": 0.0, "1900": 0.0}) -> Type[Slot]:
+        open_slots = self.generate_open_slots(slots, consumed_capacity_percentage)
         return open_slots[self.get_random_int(open_slots)]
 
     def get_random_int(self, open_slots: List[Slot]) -> int:
@@ -47,18 +47,18 @@ class SlotSelector():
         slot_array.sort(key=lambda slot: slot.cost)
         return slot_array
 
-    def asf(self, c: float, a: float) -> float:
-        return c*(1 + 0.5*a**4/(1.05-a))
+    def asf(self, c: float, ccp: float) -> float:
+        return c*(1 + 0.5*ccp**4/(1.05-ccp))
 
-    def scale_by_availability(self, normalized_slot_costs: List[Slot], availability: Mapping[str, float]) -> List[Slot]:
-        normalized_slot_costs = list(filter(lambda slot: availability[slot.start_time] < 1, normalized_slot_costs))
-        scaled_costs = list(map(lambda slot: Slot(slot.start_time,self.asf(slot.cost,availability[slot.start_time])),normalized_slot_costs))
+    def scale_by_consumed_capacity_percentage(self, normalized_slot_costs: List[Slot], consumed_capacity_percentage: Mapping[str, float]) -> List[Slot]:
+        normalized_slot_costs = list(filter(lambda slot: consumed_capacity_percentage[slot.start_time] < 1, normalized_slot_costs))
+        scaled_costs = list(map(lambda slot: Slot(slot.start_time,self.asf(slot.cost,consumed_capacity_percentage[slot.start_time])),normalized_slot_costs))
         return list(self.normalize_costs(scaled_costs))
     
-    def generate_open_slots(self, slots: Mapping[str,Any], availability: Mapping[str, float]) -> List[Slot]:
+    def generate_open_slots(self, slots: Mapping[str,Any], consumed_capacity_percentage: Mapping[str, float]) -> List[Slot]:
         slot_list = [Slot(k,v) for k, v in slots.items()]
         normalized_slot_costs = self.normalize_costs(slot_list)
-        normalized_slot_costs = self.scale_by_availability(normalized_slot_costs, availability)
+        normalized_slot_costs = self.scale_by_consumed_capacity_percentage(normalized_slot_costs, consumed_capacity_percentage)
         index = 0
         for slot in normalized_slot_costs:
             if slot.cost - normalized_slot_costs[0].cost > self.slot_threshold:
@@ -71,11 +71,11 @@ if __name__ == "__main__":
     slotPref =  {"1300": 0.31, "1500": 0.22, "1700": 0.38, "1900": 0.10}
     slotSelector = SlotSelector(slot_preferences=slotPref)
     slots = {'1300': 95.67, '1500': 95.67, '1700': 95.67, '1900': 95.67}
-    availability =  {"1300": 0.0, "1500": 0.9, "1700": 0.0, "1900": 0.0}
+    consumed_capacity_percentage =  {"1300": 0.0, "1500": 0.9, "1700": 0.0, "1900": 0.0}
     slot_list = [Slot(k,v) for k, v in slots.items()]
     print("slot_list=",slot_list)
     print(slotSelector.normalize_costs(slot_list))
-    print(slotSelector.scale_by_availability(slot_list,availability))
-    print(slotSelector.generate_open_slots(slots,availability))
-    print(slotSelector.choose_slot(slots,availability))
+    print(slotSelector.scale_by_consumed_capacity_percentage(slot_list,consumed_capacity_percentage))
+    print(slotSelector.generate_open_slots(slots,consumed_capacity_percentage))
+    print(slotSelector.choose_slot(slots,consumed_capacity_percentage))
     print('Done')
