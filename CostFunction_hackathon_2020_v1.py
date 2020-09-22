@@ -21,13 +21,13 @@ import numpy as np
 
 
 #List of DFs
-path = r"C:\Users\abdullah.alkhaled\Desktop\SCM Project\same-day-optimization\Offer_Management"
-zip_info = pd.read_csv(path + "\zip_info_STATIC_v3.csv", sep=",")
-zip_slot_info = pd.read_csv(path + "\zip_slot_info_STATIC_v3.csv", sep=",")
-slot_maxZipCount = pd.read_csv(path + "\slot_maxZipCount_STATIC_v3.csv", sep=",")
+#path = r"C:\Users\abdullah.alkhaled\Desktop\SCM Project\same-day-optimization\Offer_Management"
+#zip_info = pd.read_csv(path + "\zip_info_STATIC_v3.csv", sep=",")
+#zip_slot_info = pd.read_csv(path + "\zip_slot_info_STATIC_v3.csv", sep=",")
+#slot_maxZipCount = pd.read_csv(path + "\slot_maxZipCount_STATIC_v3.csv", sep=",")
 
-slot_capacity = pd.read_csv(path + "\slot_capacity_DYNAMIC_full_v3.csv", sep=",")
-zip_slot_sim = pd.read_csv(path + "\zip_slot_sim_DYNAMIC_v3.csv", sep=",")
+#slot_capacity = pd.read_csv(path + "\slot_capacity_DYNAMIC_full_v3.csv", sep=",")
+#zip_slot_sim = pd.read_csv(path + "\zip_slot_sim_DYNAMIC_v3.csv", sep=",")
 
 
 def prepare_DF (market,day_of_wk): #market ='Nashville TN' day_of_wk = 0 
@@ -44,7 +44,7 @@ def prepare_DF (market,day_of_wk): #market ='Nashville TN' day_of_wk = 0
 
 
 #4.1.0: Stem distance -- FSL location needed
-def d_0(zipcode,slot,zip_info): 
+def d_0(zipcode,slot,zip_info,zip_slot_sim): 
     zip_open = 0 
     for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
         zip_open += zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0]
@@ -171,7 +171,7 @@ def DPO(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, zip_sl
     n_is_n_value = n_is_n(zipcode,slot,zip_slot_info)
     n_is_value = n_is(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, zip_slot_sim)
     
-    d_0_value = d_0(zipcode,slot,zip_info)
+    d_0_value = d_0(zipcode,slot,zip_info,zip_slot_sim)
     d_is_t_value = d_is_t(zipcode,slot,zip_info,zip_slot_sim)
     d_is_z_value = d_is_z(zipcode,slot,zip_info,zip_slot_sim)
     d_is_n_value = d_is_n(zipcode,zip_info)
@@ -226,8 +226,8 @@ def CostFunction(market,day_of_wk,zipcode,slot,expert_type):
 # In[15]:
 
 
-costs = CostFunction('Nashville TN',0,35620,1300,"FT")
-costs
+#costs = CostFunction('Nashville TN',0,35620,1300,"FT")
+#costs
 
 
 # In[ ]:
