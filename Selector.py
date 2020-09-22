@@ -51,6 +51,7 @@ class SlotSelector():
         return c*(1 + 0.5*a**4/(1.05-a))
 
     def scale_by_availability(self, normalized_slot_costs: List[Slot], availability: Mapping[str, float]) -> List[Slot]:
+        normalized_slot_costs = list(filter(lambda slot: availability[slot.start_time] < 1, normalized_slot_costs))
         scaled_costs = list(map(lambda slot: Slot(slot.start_time,self.asf(slot.cost,availability[slot.start_time])),normalized_slot_costs))
         return list(self.normalize_costs(scaled_costs))
     
