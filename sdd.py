@@ -63,13 +63,26 @@ def main():
     db.close()
 
     List = [uniqueDateList[5]] 
+    print(List)
     #print(uniqueDateList)
-    #for uDate in uniqueDateList:
-    for uDate in List:
+    for uDate in uniqueDateList:
+    #for uDate in List:
         inputDataByDate = inputData[inputData['SJ CREATED DATE'] == uDate]
         inputDataByDate = inputDataByDate.sort_values(by=['SJ CREATED TIME'],ascending=True) 
 
         for row in inputDataByDate.itertuples():
+            inputData = pd.read_csv('data/HackathonInputData_v4.csv', sep=",")
+
+            zip_info = pd.read_csv("data/zip_info_STATIC_v3.csv", sep=",")
+            zip_slot_info = pd.read_csv("data/zip_slot_info_STATIC_v3.csv", sep=",")
+            slot_maxZipCount = pd.read_csv("data/slot_maxZipCount_STATIC_v3.csv", sep=",")
+
+            zip_info.zipcode = zip_info.zipcode.astype(str)
+            zip_slot_info.zipcode = zip_slot_info.zipcode.astype(str)
+            zip_slot_info.scheduled_service_time = zip_slot_info.scheduled_service_time.astype('int64')
+            zip_info.adj_zip_30 = zip_info.adj_zip_30.astype(str)
+            zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").replace("\n", "").split(" "))
+
             #zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").replace("\n", "").split(" "))
             print(row.ZIPCODE, row.SCHEDULED_SERVICE_TIME, row.LOCATION_NAME, row.time_of_day)
             zipcode = checkLen(str(row.ZIPCODE))
@@ -153,20 +166,41 @@ def main():
             slotSelector = SlotSelector(slot_preferences = slotPref)
 
             slot_sim_1300 = slot_sim[slot_sim.slot == 1300]
-            capacity_1300 = (slot_sim_1300['capacity'] - slot_sim_1300['capacity_remaining'])/slot_sim_1300['capacity']
+            if slot_sim_1300['capacity_remaining'].values[0] < 1:
+                 capacity_1300 = (slot_sim_1300['capacity'].values[0])/slot_sim_1300['capacity'].values[0]
+            else:
+                capacity_1300 = (slot_sim_1300['capacity'].values[0] - slot_sim_1300['capacity_remaining'].values[0])/slot_sim_1300['capacity'].values[0]
 
             slot_sim_1500 = slot_sim[slot_sim.slot == 1500]
-            capacity_1500 = (slot_sim_1500['capacity'] - slot_sim_1500['capacity_remaining'])/slot_sim_1500['capacity']
-
+            if slot_sim_1500['capacity_remaining'].values[0] < 1:
+                 capacity_1500 = (slot_sim_1500['capacity'].values[0])/slot_sim_1500['capacity'].values[0]
+            else:
+                capacity_1500 = (slot_sim_1500['capacity'].values[0] - slot_sim_1500['capacity_remaining'].values[0])/slot_sim_1500['capacity'].values[0]
+            
             slot_sim_1700 = slot_sim[slot_sim.slot == 1700]
-            capacity_1700 = (slot_sim_1700['capacity'] - slot_sim_1700['capacity_remaining'])/slot_sim_1700['capacity']
+            if slot_sim_1700['capacity_remaining'].values[0] < 1:
+                 capacity_1700 = (slot_sim_1700['capacity'].values[0])/slot_sim_1700['capacity'].values[0]
+            else:
+                capacity_1700 = (slot_sim_1700['capacity'].values[0] - slot_sim_1700['capacity_remaining'].values[0])/slot_sim_1700['capacity'].values[0]
 
             slot_sim_1900 = slot_sim[slot_sim.slot == 1900]
-            capacity_1900 = (slot_sim_1900['capacity'] - slot_sim_1900['capacity_remaining'])/slot_sim_1900['capacity']
+            if slot_sim_1900['capacity_remaining'].values[0] < 1:
+                 capacity_1900 = (slot_sim_1900['capacity'].values[0])/slot_sim_1900['capacity'].values[0]
+            else:
+                capacity_1900 = (slot_sim_1900['capacity'].values[0] - slot_sim_1900['capacity_remaining'].values[0])/slot_sim_1900['capacity'].values[0]
+
+            #slot_sim_1500 = slot_sim[slot_sim.slot == 1500]
+            #capacity_1500 = (slot_sim_1500['capacity'] - slot_sim_1500['capacity_remaining'])/slot_sim_1500['capacity']
+
+            #slot_sim_1700 = slot_sim[slot_sim.slot == 1700]
+            #capacity_1700 = (slot_sim_1700['capacity'] - slot_sim_1700['capacity_remaining'])/slot_sim_1700['capacity']
+
+            #slot_sim_1900 = slot_sim[slot_sim.slot == 1900]
+            #capacity_1900 = (slot_sim_1900['capacity'] - slot_sim_1900['capacity_remaining'])/slot_sim_1900['capacity']
       
              #print(capacity)
 
-            availability =  {"1300": capacity_1300.values[0], "1500": capacity_1500.values[0], "1700": capacity_1700.values[0], "1900": capacity_1900.values[0]}
+            availability =  {"1300": capacity_1300, "1500": capacity_1500, "1700": capacity_1700, "1900": capacity_1900}
             print("Availability ::", availability)
             choosenSlot = slotSelector.choose_slot(cost_dictionary, availability)
             print("Choosen Slots ::", choosenSlot)

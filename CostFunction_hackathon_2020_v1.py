@@ -30,14 +30,14 @@ import numpy as np
 #zip_slot_sim = pd.read_csv(path + "\zip_slot_sim_DYNAMIC_v3.csv", sep=",")
 
 
-def prepare_DF (market,day_of_wk): #market ='Nashville TN' day_of_wk = 0 
-    global zip_info, zip_slot_info,slot_maxZipCount,slot_capacity,zip_slot_sim
-    zip_info = zip_info[zip_info.market == market]
-    zip_slot_info = zip_slot_info[zip_slot_info.market == market]
-    slot_maxZipCount = slot_maxZipCount[slot_maxZipCount.market == market]
-    slot_sim = slot_capacity[(slot_capacity.market == market)&(slot_capacity.day_of_wk == day_of_wk)]
-    zip_slot_sim = zip_slot_sim[zip_slot_sim.market == market]
-    return zip_info,zip_slot_info,slot_maxZipCount,slot_sim,zip_slot_sim    
+#def prepare_DF (market,day_of_wk): #market ='Nashville TN' day_of_wk = 0 
+ #   global zip_info, zip_slot_info,slot_maxZipCount,slot_capacity,zip_slot_sim
+ #   zip_info = zip_info[zip_info.market == market]
+  #  zip_slot_info = zip_slot_info[zip_slot_info.market == market]
+   # slot_maxZipCount = slot_maxZipCount[slot_maxZipCount.market == market]
+   # slot_sim = slot_capacity[(slot_capacity.market == market)&(slot_capacity.day_of_wk == day_of_wk)]
+   # zip_slot_sim = zip_slot_sim[zip_slot_sim.market == market]
+   # return zip_info,zip_slot_info,slot_maxZipCount,slot_sim,zip_slot_sim    
 
 
 # In[4]:
@@ -206,21 +206,21 @@ def slotCosts(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, 
 # In[14]:
 
 
-def CostFunction(market,day_of_wk,zipcode,slot,expert_type):
+#def CostFunction(market,day_of_wk,zipcode,slot,expert_type):
     #global prepare_DF, d_0, 
-    zip_info,zip_slot_info,slot_maxZipCount,slot_sim,zip_slot_sim = prepare_DF (market,day_of_wk)
+ #   zip_info,zip_slot_info,slot_maxZipCount,slot_sim,zip_slot_sim = prepare_DF (market,day_of_wk)
 
-    zip_info.zipcode = zip_info.zipcode.astype(str)
-    zip_slot_info.zipcode = zip_slot_info.zipcode.astype(str)
-    zip_slot_sim.zipcode = zip_slot_sim.zipcode.astype(str)
+  #  zip_info.zipcode = zip_info.zipcode.astype(str)
+   # zip_slot_info.zipcode = zip_slot_info.zipcode.astype(str)
+   # zip_slot_sim.zipcode = zip_slot_sim.zipcode.astype(str)
     
-    zip_slot_info.scheduled_service_time = zip_slot_info.scheduled_service_time.astype('int64')
-    zip_slot_sim.slot = zip_slot_sim.slot.astype('int64')
-    zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").replace("\n", "").split(" "))
+   # zip_slot_info.scheduled_service_time = zip_slot_info.scheduled_service_time.astype('int64')
+   # zip_slot_sim.slot = zip_slot_sim.slot.astype('int64')
+   # zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").replace("\n", "").split(" "))
     
-    cost_dictionary = slotCosts(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, zip_slot_sim)
+    #cost_dictionary = slotCosts(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, zip_slot_sim)
     
-    return cost_dictionary
+    #return cost_dictionary
 
 
 # In[15]:
