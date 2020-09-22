@@ -216,7 +216,7 @@ def CostFunction(market,day_of_wk,zipcode,slot,expert_type):
     
     zip_slot_info.scheduled_service_time = zip_slot_info.scheduled_service_time.astype('int64')
     zip_slot_sim.slot = zip_slot_sim.slot.astype('int64')
-    zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").split(" "))
+    zip_info['adj_zip_30'] = zip_info['adj_zip_30'].apply(lambda x: x.replace("[", "").replace("]", "").replace("'", "").replace("\n", "").split(" "))
     
     cost_dictionary = slotCosts(zipcode,slot,expert_type,zip_info,zip_slot_info,slot_maxZipCount, zip_slot_sim)
     
