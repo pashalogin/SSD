@@ -164,7 +164,7 @@ def main():
             slotPref =  {"1300": slot_Pref['1300'].values[0], "1500": slot_Pref['1500'].values[0], "1700": slot_Pref['1700'].values[0], "1900": slot_Pref['1900'].values[0]}
 
             print("Slot Preferences ::", slotPref)
-            slotSelector = SlotSelector(slot_preferences = slotPref)
+            slotSelector = SlotSelector(slot_preferences = slotPref, max=1)
 
             slot_sim_1300 = slot_sim[slot_sim.slot == 1300]
             if slot_sim_1300['capacity_remaining'].values[0] < 1:
