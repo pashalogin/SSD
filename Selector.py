@@ -41,6 +41,8 @@ class SlotSelector():
     def normalize_costs(self, slots: List[Slot]) -> List[Slot]:
         costs = list(map(lambda slot: slot.cost,slots))
         raw_costs = list(filter(lambda cost: not math.isnan(cost), costs))
+        if len(raw_costs) == 0:
+            return []
         sum = reduce((lambda x, y: x + y),raw_costs)
         slot_array = list(filter(lambda slot: not math.isnan(slot.cost), slots))
         slot_array = list(map(lambda slot: Slot(slot.start_time,slot.cost/sum), slot_array))
@@ -68,10 +70,10 @@ class SlotSelector():
 
 if __name__ == "__main__":
     # execute only if run as a script
-    slotPref =  {"1300": 0.31, "1500": 0.22, "1700": 0.38, "1900": 0.10}
+    slotPref =  {"1300": 0.49, "1500": 0.18, "1700": 0.24, "1900": 0.08}
     slotSelector = SlotSelector(slot_preferences=slotPref)
-    slots = {'1300': 95.67, '1500': 95.67, '1700': 95.67, '1900': 95.67}
-    consumed_capacity_percentage =  {"1300": 0.0, "1500": 0.9, "1700": 0.0, "1900": 0.0}
+    slots = {'1300': 9.0, '1500': 27.75, '1700': 27.75, '1900': 27.75}
+    consumed_capacity_percentage =  {'1300': 0.25, '1500': 0.0, '1700': 0.125, '1900': 0.0}
     slot_list = [Slot(k,v) for k, v in slots.items()]
     print("slot_list=",slot_list)
     print(slotSelector.normalize_costs(slot_list))
