@@ -62,14 +62,15 @@ def main():
          zip_slot_sim = pd.read_sql_query("select * from ZIP_SLOT_SIM", db)
     db.close()
 
-    List = [uniqueDateList[5]] 
+    List = [uniqueDateList[0],uniqueDateList[1], uniqueDateList[2],uniqueDateList[3], uniqueDateList[4]] 
     print(List)
     #print(uniqueDateList)
-    for uDate in uniqueDateList:
-    #for uDate in List:
+    #for uDate in uniqueDateList:
+    for uDate in List:
         inputDataByDate = inputData[inputData['SJ CREATED DATE'] == uDate]
         inputDataByDate = inputDataByDate.sort_values(by=['SJ CREATED TIME'],ascending=True) 
-
+        inputDataByDate = inputData[inputData['SERVICE_JOB_STATUS'] != 'CAN']
+        
         for row in inputDataByDate.itertuples():
             inputData = pd.read_csv('data/HackathonInputData_v4.csv', sep=",")
 
@@ -202,6 +203,8 @@ def main():
 
             availability =  {"1300": capacity_1300, "1500": capacity_1500, "1700": capacity_1700, "1900": capacity_1900}
             print("Availability ::", availability)
+            print("day Of Week ::", day_of_wk)
+            print("row ::", row)
             choosenSlot = slotSelector.choose_slot(cost_dictionary, availability)
             print("Choosen Slots ::", choosenSlot)
 

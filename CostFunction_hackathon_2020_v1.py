@@ -46,9 +46,11 @@ import numpy as np
 #4.1.0: Stem distance -- FSL location needed
 def d_0(zipcode,slot,zip_info,zip_slot_sim): 
     zip_open = 0 
-    for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
-        zip_open += zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0]
-    
+    try:
+        for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
+            zip_open += zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0]
+    except:
+        zip_open = 0
     if zip_open >= 1:
         d_0 = 0
     else:
@@ -74,9 +76,13 @@ def d_is_z(zipcode,slot,zip_info,zip_slot_sim):
     k_zipcode = 1 #adjust the k value
     tau = 0
     area = 0.0
-    for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
-        tau += min(1, zip_info[zip_info.zipcode==str(i)].AvgClaimsPerDay.values[0])*zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0]
-        area += zip_info[zip_info.zipcode == str(i)].area.values[0]
+    try:
+        for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
+            tau += min(1, zip_info[zip_info.zipcode==str(i)].AvgClaimsPerDay.values[0])*zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0]
+            area += zip_info[zip_info.zipcode == str(i)].area.values[0]
+    except:
+        area = 1
+        tau = 1
     delta = (tau/area)*1.0
     d_is_z = min (d_z_avg, k_zipcode/np.sqrt(delta))
     return d_is_z
@@ -127,9 +133,12 @@ def n_is_n(zipcode,slot,zip_slot_info):
 #4.1.5
 def n_is_z(zipcode,slot,zip_info,zip_slot_sim, slot_maxZipCount):
     n_open = 0
-    for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
-        n_open += (zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0])
-    n_open= max(1,n_open)
+    try:
+        for i in zip_info[zip_info.zipcode == str(zipcode)].adj_zip_30.values[0]:
+            n_open += (zip_slot_sim[(zip_slot_sim.zipcode == str(i)) & (zip_slot_sim.slot == int(slot))].served_flag.values[0])
+        n_open= max(1,n_open)
+    except:
+        n_open= 1
     v_z = slot_maxZipCount[slot_maxZipCount.scheduled_service_time ==int(slot)].maxZipCount.values[0] #historical value
     n_is_z = min(n_open, v_z)
     return n_is_z
