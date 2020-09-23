@@ -66,14 +66,14 @@ class SlotSelector():
             if slot.cost - normalized_slot_costs[0].cost > self.slot_threshold:
                 return normalized_slot_costs[0:min(max(index,self.min),self.max)]
             index += 1
-        return normalized_slot_costs
+        return normalized_slot_costs[0:min(max(index,self.min),self.max)]
 
 if __name__ == "__main__":
     # execute only if run as a script
     slotPref =  {"1300": 0.49, "1500": 0.18, "1700": 0.24, "1900": 0.08}
-    slotSelector = SlotSelector(slot_preferences=slotPref)
-    slots = {'1300': 9.0, '1500': 27.75, '1700': 27.75, '1900': 27.75}
-    consumed_capacity_percentage =  {'1300': 0.25, '1500': 0.0, '1700': 0.125, '1900': 0.0}
+    slotSelector = SlotSelector(slot_preferences=slotPref, max=1)
+    slots = {'1300': 21.0, '1500': 44.83, '1700': 44.83, '1900': 44.83}
+    consumed_capacity_percentage =  {'1300': 0.1875, '1500': 0.0, '1700': 0.015625, '1900': 0.0}
     slot_list = [Slot(k,v) for k, v in slots.items()]
     print("slot_list=",slot_list)
     print(slotSelector.normalize_costs(slot_list))
