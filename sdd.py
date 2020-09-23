@@ -24,7 +24,7 @@ def createTables(db):
 def loadDynamicData(db):
     pd.read_csv('data/zip_slot_sim_DYNAMIC_v3.csv', delimiter=",").to_sql("ZIP_SLOT_SIM",db, if_exists='append', index=False)
     #displayData(db, "ZIP_SLOT_SIM")
-    pd.read_csv('data/slot_capacity_DYNAMIC_full_v5_1.csv', delimiter=",").to_sql("SLOT_CAPACITY",db, if_exists='append', index=False)
+    pd.read_csv('data/slot_capacity_DYNAMIC_full_v5_1X4.csv', delimiter=",").to_sql("SLOT_CAPACITY",db, if_exists='append', index=False)
    # displayData(db, "SLOT_CAPACITY")
     
 def displayData(db, tableName):
